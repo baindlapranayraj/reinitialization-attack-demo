@@ -16,7 +16,7 @@ cd reintialization_attack
 
 2. Install dependencies:
 ```bash
-npm install
+yarn 
 ```
 
 3. Build the program:
