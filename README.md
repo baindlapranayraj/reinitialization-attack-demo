@@ -140,4 +140,6 @@ To prevent reinitialization attacks:
 ## Security Note
 
 This code deliberately contains vulnerabilities for educational purposes. Do not use this code in production environments.
+## Blog about Reintialization Attack 
+https://marvelous-thorium-112.notion.site/Reinitialization-Attack-1c0c5b6446128059843eedcae87a1448#1c5c5b644612803183cae14c1f5412df
 
