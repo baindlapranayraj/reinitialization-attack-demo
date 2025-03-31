@@ -2,6 +2,9 @@
 
 This project demonstrates a common security vulnerability in Solana smart contracts known as the reinitialization attack. It shows how improper use of account initialization can lead to security breaches.
 
+## My Blog on this Attack
+Link:- http://bit.ly/43uTyZn
+
 ## Project Description
 
 The project implements a simple deposit/withdrawal system that contains a deliberate vulnerability to showcase how reinitialization attacks work. This is meant for educational purposes to help developers understand and avoid such vulnerabilities in their own programs.
@@ -140,6 +143,3 @@ To prevent reinitialization attacks:
 ## Security Note
 
 This code deliberately contains vulnerabilities for educational purposes. Do not use this code in production environments.
-## Blog about Reintialization Attack 
-https://marvelous-thorium-112.notion.site/Reinitialization-Attack-1c0c5b6446128059843eedcae87a1448#1c5c5b644612803183cae14c1f5412df
-
